@@ -1,3 +1,4 @@
+'use strict';
 // VentureScope V2 - Application Logic
 // Developer: AI Assistant
 
@@ -29,6 +30,17 @@ const startups = [
     { id: 24, name: 'Meesho', sector: 'E-Commerce', stage: 'Series E', country: 'India', founded: 2015, funding: '$975M', fundingAmount: 975, description: 'Social commerce platform.', investors: ['Fidelity', 'B Capital', 'SoftBank'], employees: 2000, growth: 'High', website: 'meesho.com', aiScore: 69 },
     { id: 25, name: 'Delhivery', sector: 'Logistics', stage: 'Public', country: 'India', founded: 2011, funding: '$1.1B', fundingAmount: 1100, description: 'Supply chain and logistics provider.', investors: ['SoftBank', 'Carlyle', 'Fosun'], employees: 10000, growth: 'Stable', website: 'delhivery.com', aiScore: 45 }
 ];
+
+// --- Security helper ---
+/** Escape a value for safe interpolation into innerHTML. */
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
 
 // --- STATE ---
 const state = {
@@ -129,17 +141,17 @@ function renderTable() {
         
         tr.innerHTML = `
             <td class="action-cell" onclick="event.stopPropagation(); toggleWatchlist(${company.id}, this)">
-                <button class="icon-btn star-btn ${isWatchlisted ? 'active' : ''}">${isWatchlisted ? '★' : '☆'}</button>
+                <button class="icon-btn star-btn ${isWatchlisted ? 'active' : ''}" aria-label="Toggle watchlist" aria-pressed="${isWatchlisted}">${isWatchlisted ? '★' : '☆'}</button>
             </td>
             <td>
-                <strong>${company.name}</strong>
-                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">${company.website}</div>
+                <strong>${escapeHtml(company.name)}</strong>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">${escapeHtml(company.website)}</div>
             </td>
-            <td><span class="badge">${company.sector}</span></td>
-            <td>${company.stage}</td>
-            <td>${company.funding}</td>
-            <td>${company.country}</td>
-            <td>${company.founded}</td>
+            <td><span class="badge">${escapeHtml(company.sector)}</span></td>
+            <td>${escapeHtml(company.stage)}</td>
+            <td>${escapeHtml(company.funding)}</td>
+            <td>${escapeHtml(company.country)}</td>
+            <td>${escapeHtml(company.founded)}</td>
             <td>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <div class="score-bar-container">
@@ -227,8 +239,10 @@ function populateFilters() {
 }
 
 function applyFiltersAndRender() {
-    let result = state.data;
-    
+    // Copy the source array. The sort step below sorts in place, and mutating
+    // state.data directly would permanently reorder the canonical dataset.
+    let result = [...state.data];
+
     // 1. Tab filter
     if (state.activeTab === 'watchlist') {
         result = result.filter(c => state.watchlist.includes(c.id));
@@ -414,15 +428,16 @@ async function handleAiChat() {
         });
         
         const data = await response.json();
-        document.getElementById(loadingId).remove();
-        
+        document.getElementById(loadingId)?.remove();
+
         if (response.ok) {
-            appendMessage(data.choices[0].message.content);
+            const reply = data?.choices?.[0]?.message?.content;
+            appendMessage(reply || 'The model returned an empty response. Please try again.');
         } else {
             appendMessage(`Error: ${data.error?.message || 'Failed to fetch'}`);
         }
     } catch (err) {
-        document.getElementById(loadingId).remove();
+        document.getElementById(loadingId)?.remove();
         appendMessage(`Network Error: Make sure your API key is correct and you have internet access.`);
         console.error(err);
     }

@@ -6,6 +6,10 @@
     <title>VentureScope - Startup Intelligence Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; worker-src 'self' blob: https://cdnjs.cloudflare.com; connect-src 'self' https://api.groq.com">
+    <meta name="theme-color" content="#0b0f1a">
+    <meta name="description" content="Startup intelligence platform with real-time filtering, watchlists, and a Groq-powered AI analyst for VC research.">
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48dGV4dCB5PSIuOWVtIiBmb250LXNpemU9IjkwIj7wn5OIPC90ZXh0Pjwvc3ZnPg==">
 </head>
 <body>
     <!-- Top Navbar -->
@@ -14,7 +18,7 @@
             <h1 class="logo">VentureScope</h1>
             <div class="search-container">
                 <span class="search-icon">🔍</span>
-                <input type="text" id="global-search" placeholder="Search companies, sectors... (Press '/')">
+                <input aria-label="Search companies, sectors... (Press '/')" type="text" id="global-search" placeholder="Search companies, sectors... (Press '/')">
             </div>
             <div class="nav-links">
                 <a href="#" class="active">Dashboard</a>
@@ -119,7 +123,7 @@
                 <h2 id="detail-name">Company Name</h2>
                 <span id="detail-stage" class="badge">Stage</span>
             </div>
-            <button id="close-panel-btn" class="icon-btn">✕</button>
+            <button id="close-panel-btn" class="icon-btn" aria-label="Close">✕</button>
         </div>
         <div class="panel-content">
             <p id="detail-description" class="detail-description">Description goes here.</p>
@@ -170,7 +174,7 @@
         <div class="modal-content chat-container">
             <div class="chat-header">
                 <h2>AI Analyst</h2>
-                <button id="close-ai-modal" class="icon-btn">✕</button>
+                <button id="close-ai-modal" class="icon-btn" aria-label="Close">✕</button>
             </div>
             <div id="chat-messages" class="chat-messages">
                 <div class="message ai-message">
@@ -178,7 +182,7 @@
                 </div>
             </div>
             <div class="chat-input-area">
-                <textarea id="chat-input" placeholder="Ask about companies, sectors, or trends... (Shift+Enter for new line)" rows="1"></textarea>
+                <textarea aria-label="Ask about companies, sectors, or trends... (Shift+Enter for new line)" id="chat-input" placeholder="Ask about companies, sectors, or trends... (Shift+Enter for new line)" rows="1"></textarea>
                 <button id="send-chat-btn" class="btn btn-primary">Send</button>
             </div>
         </div>
@@ -189,11 +193,11 @@
         <div class="modal-content api-container">
             <div class="modal-header">
                 <h2>Groq API Key Setup</h2>
-                <button id="close-api-modal" class="icon-btn">✕</button>
+                <button id="close-api-modal" class="icon-btn" aria-label="Close">✕</button>
             </div>
             <div class="modal-body">
                 <p>To use the AI Analyst features, please provide your Groq API key.</p>
-                <input type="password" id="api-key-input" placeholder="gsk_..." class="form-input">
+                <input aria-label="gsk_..." type="password" id="api-key-input" placeholder="gsk_..." class="form-input">
                 <p class="help-text">Your key is stored locally in your browser and never sent to our servers.</p>
                 <button id="save-api-key-btn" class="btn btn-primary" style="width: 100%; margin-top: 15px;">Save Key</button>
             </div>
