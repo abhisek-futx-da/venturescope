@@ -405,7 +405,7 @@ async function handleAiChat() {
                 'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: 'llama3-8b-8192',
+                model: 'llama-3.1-8b-instant',
                 messages: [
                     { role: 'system', content: 'You are a startup analyst assistant with expertise in VC investing, startup ecosystems, and market trends. Answer questions concisely with specific data points. When mentioning companies, refer to their actual metrics.' },
                     { role: 'user', content: text }
