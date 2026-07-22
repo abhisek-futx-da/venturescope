@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VentureScope - Startup Intelligence Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <h1 class="logo">VentureScope</h1>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="global-search" placeholder="Search companies, sectors... (Press '/')">
+            </div>
+            <div class="nav-links">
+                <a href="#" class="active">Dashboard</a>
+                <a href="#">Discover</a>
+                <a href="#">Sectors</a>
+                <a href="#" id="nav-ai-analyst">AI Analyst</a>
+            </div>
+        </div>
+        <div class="nav-right">
+            <button id="api-key-btn" class="btn btn-ghost">API Key</button>
+            <button class="btn btn-primary">+ Add Company</button>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="app-container">
+        <!-- Sidebar Filters -->
+        <aside class="sidebar">
+            <div class="filter-group">
+                <h3>Sectors</h3>
+                <div id="filter-sector-list" class="checkbox-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h3>Stage</h3>
+                <div id="filter-stage-list" class="checkbox-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h3>Country</h3>
+                <div id="filter-country-list" class="checkbox-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <button id="clear-filters-btn" class="btn btn-ghost" style="width: 100%; margin-top: 10px;">Clear Filters</button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="content-header">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="all">All Companies</button>
+                    <button class="tab-btn" data-tab="watchlist">Watchlist</button>
+                    <button class="tab-btn" data-tab="recent">Recent</button>
+                </div>
+                <div class="view-controls">
+                    <button id="export-btn" class="btn btn-ghost">Export CSV</button>
+                    <div class="view-toggle">
+                        <button class="icon-btn active">≣</button>
+                        <button class="icon-btn">⊞</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-container">
+                <table id="companies-table">
+                    <thead>
+                        <tr>
+                            <th></th> <!-- Star icon column -->
+                            <th class="sortable" data-sort="name">Company <span class="sort-indicator"></span></th>
+                            <th class="sortable" data-sort="sector">Sector <span class="sort-indicator"></span></th>
+                            <th class="sortable" data-sort="stage">Stage <span class="sort-indicator"></span></th>
+                            <th class="sortable" data-sort="fundingAmount">Funding <span class="sort-indicator"></span></th>
+                            <th class="sortable" data-sort="country">Country <span class="sort-indicator"></span></th>
+                            <th class="sortable" data-sort="founded">Founded <span class="sort-indicator"></span></th>
+                            <th class="sortable" data-sort="aiScore">AI Score <span class="sort-indicator"></span></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="companies-tbody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+                <div id="empty-state" class="empty-state hidden">
+                    <p>No companies found matching your criteria.</p>
+                    <button id="reset-search-btn" class="btn btn-ghost">Reset Search & Filters</button>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <span id="page-info">Showing 1-10 of 25</span>
+                <div class="page-controls">
+                    <button id="prev-page-btn" class="btn btn-ghost" disabled>Previous</button>
+                    <div id="page-numbers" class="page-numbers"></div>
+                    <button id="next-page-btn" class="btn btn-ghost">Next</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Company Detail Panel (Slide-in) -->
+    <div id="company-panel" class="slide-panel">
+        <div class="panel-header">
+            <div class="panel-title">
+                <h2 id="detail-name">Company Name</h2>
+                <span id="detail-stage" class="badge">Stage</span>
+            </div>
+            <button id="close-panel-btn" class="icon-btn">✕</button>
+        </div>
+        <div class="panel-content">
+            <p id="detail-description" class="detail-description">Description goes here.</p>
+            
+            <div class="metric-grid">
+                <div class="metric">
+                    <span class="metric-label">Total Funding</span>
+                    <strong id="detail-funding">$0M</strong>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Founded</span>
+                    <strong id="detail-founded">YYYY</strong>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Location</span>
+                    <strong id="detail-location">Country</strong>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Employees</span>
+                    <strong id="detail-employees">0</strong>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h3>Investors</h3>
+                <ul id="detail-investors" class="investor-list"></ul>
+            </div>
+
+            <div class="detail-section">
+                <h3>AI Score</h3>
+                <div class="score-bar-container">
+                    <div id="detail-score-bar" class="score-bar"></div>
+                </div>
+                <p id="detail-score-text">0/100</p>
+            </div>
+
+            <button id="ask-ai-company-btn" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                Ask AI about this company
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay for closing panels -->
+    <div id="panel-overlay" class="overlay"></div>
+
+    <!-- AI Analyst Chat Modal -->
+    <div id="ai-modal" class="modal">
+        <div class="modal-content chat-container">
+            <div class="chat-header">
+                <h2>AI Analyst</h2>
+                <button id="close-ai-modal" class="icon-btn">✕</button>
+            </div>
+            <div id="chat-messages" class="chat-messages">
+                <div class="message ai-message">
+                    Hello! I'm your AI Analyst. How can I help you analyze the startup market today?
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <textarea id="chat-input" placeholder="Ask about companies, sectors, or trends... (Shift+Enter for new line)" rows="1"></textarea>
+                <button id="send-chat-btn" class="btn btn-primary">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Key Modal -->
+    <div id="api-modal" class="modal">
+        <div class="modal-content api-container">
+            <div class="modal-header">
+                <h2>Groq API Key Setup</h2>
+                <button id="close-api-modal" class="icon-btn">✕</button>
+            </div>
+            <div class="modal-body">
+                <p>To use the AI Analyst features, please provide your Groq API key.</p>
+                <input type="password" id="api-key-input" placeholder="gsk_..." class="form-input">
+                <p class="help-text">Your key is stored locally in your browser and never sent to our servers.</p>
+                <button id="save-api-key-btn" class="btn btn-primary" style="width: 100%; margin-top: 15px;">Save Key</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
